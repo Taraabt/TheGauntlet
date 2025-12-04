@@ -1,17 +1,20 @@
 #include "MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-void UMyGameInstance::StartGame(FName GameplayLevel)
+void UMyGameInstance::StartGame(FName InGameplayLevel)
 {
-    UGameplayStatics::OpenLevel(this, GameplayLevel);
+    if (!InGameplayLevel.IsNone())
+    {
+        GameplayLevel = InGameplayLevel;
+        UGameplayStatics::OpenLevel(this, GameplayLevel);
+    }
 }
 
-void UMyGameInstance::ReturnToMenu(FName MainMenuLevel)
+void UMyGameInstance::ReturnToMenu(FName InMainMenuLevel)
 {
-    UGameplayStatics::OpenLevel(this, MainMenuLevel);
-}
-
-void UMyGameInstance::QuitGame()
-{
-    UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
+    if (!InMainMenuLevel.IsNone())
+    {
+        MainMenuLevel = InMainMenuLevel;
+        UGameplayStatics::OpenLevel(this, MainMenuLevel);
+    }
 }

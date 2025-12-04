@@ -1,8 +1,8 @@
 #pragma once
+
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "MyGameInstance.generated.h"
-#include <string>
 
 
 UCLASS()
@@ -12,19 +12,16 @@ class THEGAUNTLET_API UMyGameInstance : public UGameInstance
 
 public:
 
+    UFUNCTION(BlueprintCallable)
+    void StartGame(FName InGameplayLevel);
+
     UFUNCTION(BlueprintCallable, Category = "Game")
-    void StartGame(FName GamePlayLevel);
+    void ReturnToMenu(FName InMainMenuLevel);
 
-    UFUNCTION(BlueprintCallable)
-    void ReturnToMenu(FName MainMenuLevel);
+private:
 
-    UFUNCTION(BlueprintCallable)
-    void QuitGame();
-
-protected:
-    UPROPERTY(EditDefaultsOnly)
     FName MainMenuLevel;
 
-    UPROPERTY(EditDefaultsOnly)
+
     FName GameplayLevel;
 };

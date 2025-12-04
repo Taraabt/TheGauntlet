@@ -12,6 +12,18 @@ class THEGAUNTLET_API AMyPlayerController : public APlayerController
 public:
     virtual void BeginPlay() override;
 
-    void SetMenuMode();     // Mouse visibile, no input movimento
-    void SetGameplayMode(); // Mouse nascosto, input movimento attivo
+    UFUNCTION(BlueprintCallable, Category = "Input")
+    void SetMenuMode();
+
+    UFUNCTION(BlueprintCallable, Category = "Input")
+    void SetGameplayMode();
+
+    UFUNCTION(BlueprintCallable, Category = "Input")
+    void OnLevelLoaded();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    class UInputMappingContext* DefaultMappingContext;
+
+private:
+    void AutoPossessPawn();
 };
