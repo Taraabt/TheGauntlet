@@ -3,7 +3,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "Interactable.h"
+#include "DrawDebugHelpers.h"
 #include "MyPlayerController.h"
+
 
 AMyCharacter::AMyCharacter()
 {
@@ -39,6 +43,9 @@ void AMyCharacter::PossessedBy(AController* NewController)
             }
         }
     }
+
+    FString MappingName = MappingContext ? MappingContext->GetName() : FString("NULL");
+    FString InteractName = InteractAction ? InteractAction->GetName() : FString("NULL");
 }
 
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -58,6 +65,10 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
             EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &AMyCharacter::DoJumpStart);
             EnhancedInput->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyCharacter::DoJumpEnd);
         }
+
+        if (InteractAction)
+            EnhancedInput->BindAction(InteractAction, ETriggerEvent::Started, this, &AMyCharacter::Interact);
+
     }
 }
 
@@ -77,8 +88,9 @@ void AMyCharacter::DoMove(float Right, float Forward)
 {
     if (Controller)
     {
-        AddMovementInput(FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::X), Forward);
-        AddMovementInput(FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::Y), Right);
+        AddMovementInput(FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::X),Forward);
+
+        AddMovementInput(FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::Y),Right);
     }
 }
 
@@ -96,4 +108,25 @@ void AMyCharacter::DoJumpStart()
 void AMyCharacter::DoJumpEnd()
 {
     StopJumping();
+}
+
+void AMyCharacter::Interact()
+{
+    FVector Start = FollowCamera->GetComponentLocation();
+    FVector End = Start + FollowCamera->GetForwardVector() * 500.f;
+
+    FHitResult Hit;
+    FCollisionQueryParams Params;
+    Params.AddIgnoredActor(this);
+
+    if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params))
+    {
+        if (AActor* HitActor = Hit.GetActor())
+        {
+            if (HitActor->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
+            {
+                IInteractable::Execute_Interact(HitActor, this);
+            }
+        }
+    }
 }

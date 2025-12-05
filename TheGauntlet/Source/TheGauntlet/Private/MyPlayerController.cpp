@@ -39,10 +39,11 @@ void AMyPlayerController::AutoPossessPawn()
                 FActorSpawnParameters SpawnParams;
                 SpawnParams.Owner = this;
 
-                FVector SpawnLocation = FVector::ZeroVector;
-                FRotator SpawnRotation = FRotator::ZeroRotator;
+                FVector LocalSpawnLocation = FVector::ZeroVector;
+                FRotator LocalSpawnRotation = FRotator::ZeroRotator;
 
-                APawn* SpawnedPawn = World->SpawnActor<APawn>(DefaultPawnClass, SpawnLocation, SpawnRotation, SpawnParams);
+                APawn* SpawnedPawn = World->SpawnActor<APawn>(DefaultPawnClass, LocalSpawnLocation, LocalSpawnRotation, SpawnParams);
+
 
                 if (SpawnedPawn)
                 {
